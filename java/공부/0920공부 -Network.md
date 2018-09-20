@@ -59,7 +59,7 @@ while(true){ //client가 들어올 때마다 돌아간다.
 #### client(->server에 연결)
 
 ```java
-Socket sk = new Socket(int port);//server port와 같아야함 //prot번호로 접속
+Socket sk = new Socket(ip, int port);//server port와 같아야함 //prot번호로 접속
 
 //byte단위로 읽기(server가 보내온 데이터)
 InputStream is = sk.getInputStream(); 
@@ -68,18 +68,4 @@ OutputStream os = sk.getOutputSteam();
 
 ~.close();  //접속이 끊김
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
