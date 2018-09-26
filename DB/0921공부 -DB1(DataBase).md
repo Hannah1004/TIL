@@ -45,6 +45,10 @@
 
    ```sql
    SELECT Name,Day(컬럼명) FROM 테이블명;
+   select name as 이름, day 날짜 from 테이블명;
+   --name을 이름으로 컬럼명을 바꿔서 보여주겠다.(실제로 바뀌지X)
+   select distinct day from 테이블명;
+   --day의 중복된 행을 제거하고 검색해준다.
    ```
 
 6. **Drop 문장** ->테이블 삭제
@@ -193,3 +197,4 @@
      컬럼명 데이터타입 default 'aa'
      --컬럼명의 data를 주지않으면 default로 aa가 작성된다.
      ```
+
