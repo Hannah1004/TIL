@@ -68,6 +68,8 @@
   END;
   ```
 
+  <HR>
+
 - #### EXCEPTION
 
   ```SQL
@@ -88,10 +90,13 @@
       COUNTER :=COUNTER/0;
       DBMS_OUTPUT.PUT_LINE(COUNTER);
       EXCEPTION  --예외가 발생했을 때만 실행된다.
-          WHEN ZERO_DIVIDE THEN DBMS_OUTPUT.PUT_LINE('예외가 발생했어요  ');
-                                DBMS_OUTPUT.PUT_LINE('0으로 나눌수 없습니다.');
+          WHEN ZERO_DIVIDE THEN 
+          	DBMS_OUTPUT.PUT_LINE('예외가 발생했어요  ');
+              DBMS_OUTPUT.PUT_LINE('0으로 나눌수 없습니다.');
   END;
   ```
+
+  <HR>
 
 - #### 조건문
 
@@ -134,6 +139,8 @@
       END CASE;
   END;
   ```
+
+  <HR>
 
 - #### 반복문
 
@@ -189,3 +196,22 @@
       END LOOP;
   END;
   ```
+
+  <HR>
+
+- #### CURSOR
+
+  - SELECT의 결과집합이 여러개의 레코드를 반환할 때 사용한다.
+
+  - 커서 사용방법
+
+    ```SQL
+    1)선언
+    	CURSOR 커서이름 IS SELECT 문장; --DECLARE 위치에 선언한다.
+    2)열기
+    	OPEN 커서이름;
+    3)데이터 가져오기
+    	FETCH 커서이름 INTO 변수이름, ,,,; --반복문안에서 
+    4)닫기
+    	CLOSE 커서이름;
+    ```
