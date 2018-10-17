@@ -162,3 +162,6 @@
 
     - 매개변수가 없는 함수 - function 함수이름(){}
     - 매개변수가 있는 함수 - function 함수이름(인수(ex.color,a,b)){ return은 필요하면 사용}
+
+<hr>
+
