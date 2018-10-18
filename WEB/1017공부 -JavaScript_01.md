@@ -164,4 +164,90 @@
     - 매개변수가 있는 함수 - function 함수이름(인수(ex.color,a,b)){ return은 필요하면 사용}
 
 <hr>
+- ### 객체 = 속성 + 메소드
+
+  - 공통적인 특성을 가진 속성이나 동작들을 묶어놓은 그룹
+
+  - 객체 사용법
+
+    - 마침표(.) 사용
+
+    - 객체명.속성명 or 객체명.메소드명
+
+      ex) document.write("문자열");
+
+    - 상위객체이름.하위객체이름.속성 or 메소드
+
+  - 객체 조작문
+
+    - New()
+
+      - 만들어져 있는 객체 혹은 내장객체를 이용하여 새로운 객체를 만들때 사용
+
+        객체변수 = new 객체명();
+
+    - This
+
+      - 이것은 객체타입에 상관없이 현재의 객체를 지칭하는 키워드
+
+        this.속성 or this.하위객체
+
+    - typeof
+
+      - 변수의 데이터형을 알아내기 위해서 사용
+
+        typeof"문자열"  => "String"
+
+        typeof 숫자 => "number"
+
+<hr>
+
+- ### 내장객체
+
+  - Date : 시스템에 있는 날짜와 시간을 js에서 사용할 수 있게 해줌
+
+    - getXxx <= Xxx에 해당하는 곳을 가져온다.
+
+    - setXxx <= Xxx에 해당하는 곳이 바뀐다.
+
+      ```html
+      <!-- 오늘 날짜, 시간 가져오기 -->
+      <script>
+      	var today = new Date();  //현재날짜와 시간설정
+          document.write("today.getFullYear() = " + today.getFullYear() +"<br>");
+      	//1월=0, 2월=2 ... 12월=11
+      	document.write("today.getMonth() = " + today.getMonth() +"<br>");
+      	document.write("today.getDate() = " + today.getDate() +"<br>");
+      	
+      	//요일 -> 0=일, 1=월, 2=화, ...6=토
+          //요일을 배열방에 넣어서 꺼내온다.
+      	document.write("today.getDay() = " + today.getDay() +"<br>");
+      	var yoil = ["일","월","화","수","목","금","토"];
+      	document.write("몇요일인가 = " + yoil[today.getDay()]+"요일" +"<br>");
+      
+      	document.write("today.getHours() = " + today.getHours() +"<br>");
+      	document.write("today.getMinutes() = " + today.getMinutes() +"<br>");
+      	document.write("today.getSeconds() = " +today.getSeconds() +"<br>");
+      
+      	//출력 내용 : 년도. 월. 일. 시간(오전/오후 시:분:초)
+      	document.write("today.toLocaleString() = "+today.toLocaleString());
+      </script>
+      ```
+
+    -  날짜 계산 하기
+
+      > (날짜 - 날짜) => ms단위로 나옴
+      >
+      > (날짜 - 날짜)/1000  => **초**단위로 나옴
+      >
+      > (날짜 - 날짜) /1000/60 => **분**단위로 나옴
+      >
+      > (날짜 - 날짜) /1000/60/60=> **시**단위로 나옴
+      >
+      > (날짜 - 날짜) /1000/60/60/24=> **일**단위로 나옴  
+
+
+
+
+
 
