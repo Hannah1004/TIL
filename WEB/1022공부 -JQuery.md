@@ -12,6 +12,21 @@
 
 
 
+- JQuery의 특징
+
+  - 경량의 라이브러리, 적게 쓰고 많은 기능을 제공한다.
+
+- JQuery 제공되는 기능
+
+  - css조작
+  - event처리
+  - DOM조작
+  - AJax
+  - 다양한 Util제공
+  - Effect & Animation
+
+
+
 
 
 ```javascript
