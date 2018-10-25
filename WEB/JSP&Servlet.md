@@ -74,6 +74,7 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
   - Applet보다 낫지만 java를 알아야만 할수 있다.
 
 - JSP : ~.jsp문서 안에 HTML, CSS, JS를 그대로 작성하고 부분적으로 java코드를 작성한다.
+
   - 코딩이 중심이 front언어이고, 부분적으로 자바코드로 작성한다.
 
 <hr>
@@ -94,7 +95,7 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 
 - 현재 파일을 여러 파일과 합쳐 놓은 것이기 때문에 **하나의 소스로 만들어 컴파일** 해준다.
 
-  ==> 다른 파일에 변수 선언하고 다른 파일에서 변수를 사용할 수 있다.
+  ==> 다른 파일에 변수 선언하고 다른 파일에서 변수를 사용할 수 있다.(변수 공유)
 
   ex) index.jsp에 top.jsp와 footer.jsp를 보여주고 싶다면 
 
@@ -122,7 +123,7 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 
 - 컴파일 될때 지시자와는 달리 합친 파일이 **따로 따로 소스가 나누어져 있다.**
 
-- 변수를 공유 하려면 param을 써야한다.
+- 변수를 공유 하려면 param으로 전달해야한다.
 
   ```jsp
   <%  
@@ -184,14 +185,14 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 
        방법 :
 
-       ​	액션 태그 :  <jsp:forward page=" "/>
+       	액션 태그 :  <jsp:forward page=" "/>
 
-       ​	메소드 :  request.getRequestDispatcher(" url주소").forward(request, response) 
+       	메소드 :  request.getRequestDispatcher(" url주소").forward(request, response) 
 
 
 
      - redirect방식
-
+    
        : request와 response를 새롭게 생성해서 이동
 
   2. webServer - 브라우저 이동방식
@@ -211,23 +212,35 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 - 현재 page에 지정한 page를 덮어 씌어준다.(뒤로 가기 없음)
 
   ```jsp
-  <jsp:forward page=""/>
+  <jsp:forward page="">
+      <jsp:param name="" value=""/>
+  </jsp:forward>
   <!-- 값을 넘겨 주지 않아도 된다. response와 request가 되기 때문-->
   ```
 
   - **<jsp:forward page='<%= 변수 + ".jsp"%>' />**
     - forward 액션 태그의 page 속성은 이동할 페이지명을 기술하고 상대경로, 절대경로로 지정할 수 있다.
-  -   forward 액션 태그에서 포워딩되는 page에 parameter 값을 전달할 수 있다.
+  - 페이지가 이동할 때  기존 request와 response를 그대로 유지하면서 이동
+    - url주소를 보면 전페이지 url주소가 보임
+  - forward 액션 태그에서 포워딩되는 page에 parameter 값을 전달할 수 있다.
 
 
 
 ## JSP내장 객체
 
-#### * 확장자 jsp에서만 쓸수 있는 내장 객체
+#### * 확장자 jsp에서만 쓸수 있는 9개의 내장 객체 reference변수 제공
 
-- request => HttpServletRequest의 refernece
+> ~.jsp문서를 만들어서 서버에게 요청을 하면 ~.java의 servlet문서가 만들어진다.
+>
+> 이안에 메소드 _jspService(request, response){
+>
+> 			  	session, application, out,...(내장객체) 선언
+>
+> 			   }
 
-  - ##### 클라이언트의 요청 정보를 서버축에서 사용할 때
+- #### request => HttpServletRequest의 refernece
+
+  - ##### 클라이언트의 요청 정보를 받아서 처리하는 주요 메소드를 제공(서버축에서 사용할 때)
 
   - String value = request.getParameter(String name) ;
 
@@ -237,7 +250,7 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 
     - request로 넘어오는 한글 인코딩 변환
 
-  - String str[] = request.getParameterValues("hobby");
+  - String str[] = request.getParameterValues(String name);
 
     - name에 해당하는 value 여러개 일 때 사용함
 
@@ -253,31 +266,121 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 
     - 접속한 클라이언트에 저장된 쿠키정보(클라이언트정보)가져오기
 
-- response
+
+
+- response =>HttppServletResponse의 reference
+
+  - ##### 요청된 결과를 클라이언트쪽으로 보낼때(응답) 필요한 주요 메소드 제공
 
   서버에서 이동하는 방식
-  	1) redirect 방식 : request, response를 새롭게 생성해서 이동방식
-  		response.sendRedirect("LoginOk.jsp userName="+URLEncoder.encode(userName, "UTF-8"));	
+  	1) redirect 방식 : 페이지 이동할 때 기본 request와 response를 버리고 
+
+  				     새롭게 request와 response를 생성한 이동방식
+  		response.sendRedirect("url주소" userName="+URLEncoder.encode(변수, "UTF-8"));	
 
   	2)forward 방식 : request와 response를 유지하면서 이동 방식
   		request.getRequestDispatcher("LoginOk.jsp").forward(request, response);	
 
-  ​	
 
-- out
 
-- session
+- #### out
+
+  - 페이지내용을 담고 있는 출력 스트림 객체
+
+    ```out.println();```
+
+
+
+- #### session =>javax.servlet.http.HttpSession
+
+  > 브라우저를 start(브라우저를 열었다.) -> stop(브라우저 창을 닫았다.) 할때 까지 유지되는 동안 사용자의 정보를 서버측에 저장하여 유지해주는 것(브라우저당 session생성)
+  >
+  > ->서버는 무조건 접속이되면 sessionId를 생성하여 각 클라이언트쪽의 쿠키에 저장해놓고 다시 요청되면 그 저장된 쿠크값을 읽어와서 사용자를 구분한다.
+  >
+  > 유효시간 30분(1800초) 기본 세팅
+  >
+  > 로그인 -> 로그아웃 기능에 이용한다.
 
   - String id = session.getId();
     - 세션이 생성되면 자동으로 만들어지는 세션
   - session.setMaxInactiveInterval(시간);
     - 세션 유효시간 설정
-  - session.setAttribute(" " ," ");
+  - session.setAttribute(String name ,Object obj);
     - 세션의 정보를 저장
+  - session.getAttribute(String name)
+    - 세션의 정보를 가져와서 사용
+  - session.inValidate()
+    - 모든 세션의 정보 지우기
 
-- application
 
-- exception
+
+- #### application=> ServletContext
+
+  > 특정한 정보를 서버가 시작해서 종료될때까지 유지 되도록함
+  >
+  > 서버에 대한 정보를 추출과 웹 어플리케이션단위로 상태정보저장
+
+  - application.setAttribute(String nae, Object value);
+    - 정보를 저장하는 기능
+  - Object value = application.getAttribute(String name);
+    - name에 해당하는 정보를 가져오는 기능
+  - application.removeAttribute(String name);
+    - name에 해당하는 정보를 삭제하는 기능
+  - application.getRealPath(java.lang.String path);
+    - 실행되는 문서의 경로를 가져오는 기능
+  - Enumeration e = application.getAttributeNames();
+    - 저장된 정보의 name 가져오는 기능
+
+
+
+- #### exception=>java.lang.Throwable의 reference
+
+  > jsp페이지 서블릿 실행시 처리하지 못한 예외 처리
+
+  1. jsp문서 첫줄에 errorPage="" 설정하는 방법
+     - 모든 예외를 한페이지에서 처리할때 편리함
+  2. web.xml(배포서술자) 문서에 예외별 페이지를 설정하는 방법
+     - 예외마다 해야할일이 다를 때
+     - 예외별 페이지를 만들어서 처리할 때 편리함
+
+
+
+- #### cookie=> javax.servlet.http.Cookie
+
+  > 클라이언트의 정보를 클라이언트 pc에 저장함
+  >
+  > 사용자 측에 대한 정보를 보관해 두었다가 웹서버의 요청에 의해 그 정보를 원하는 순간에 사용할 수 있다.
+  >
+  > 한번에 4KB로 용량이 제한되고 300개 까지 저장가능함
+  >
+  > 작은정보의 형태로 저장되고 오래되면 자동삭제됨
+
+- response.addCookie(Cookie co)
+
+  - 클라이언트쪽에 클라이언트의 정보를 저장함
+
+- String getName() : 쿠키 이름 가져오기
+
+- String getValue() : 쿠키 값 가져오기
+
+- Cookie 관련 메소드정리
+
+  - int getMaxAge() => 쿠키의 사용할수 있는 기간에 대한 정보
+
+  - setMaxAge(int max) =>쿠키가 저장되는 기간 설정
+
+      ex) max=0 ->쿠키삭제
+
+    ​	max=-1 -> 쿠키폴더에 파일이 만들어지지 않지만 브라우저가 종료될때까지 쿠키의 정보는 
+
+    ​			   저장된 상태이고 브라우저를 닫으면 쿠키정보 사라짐(생략하면 -1이기본)
+
+- Cookie생성자
+
+  - Cookie(String name, String value);
+
+    ex) Cookie cookie = new Cookie("id","hannah")
+
 
 <hr>
 
@@ -290,11 +393,19 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 5. 200 :  성공!
 6. 400 :  요청의 형식이 잘못 되었을 때
 
+<hr>
 
+## 한글인코딩 처리 메소드
 
+- ##### parameter로 넘어오는 데이터 처리
 
+1. get방식 : server.xml문서에 URIEncoding="UTF-8" 필요
 
+   		tomcat8.0부터 개선
 
+2. post방식 
+
+   - 소스에 request.setCharacterEncoding(String enc) :설정
 
 
 
