@@ -185,25 +185,34 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 
        방법 :
 
-       	액션 태그 :  <jsp:forward page=" "/>
-
-       	메소드 :  request.getRequestDispatcher(" url주소").forward(request, response) 
-
-
+       ```jsp
+       액션 태그 :  <jsp:forward page=" "/>
+       
+       메소드 :  request.getRequestDispatcher(" url주소").forward(request, response) 
+       ```
 
      - redirect방식
-    
+
        : request와 response를 새롭게 생성해서 이동
+
+       방법 : 
+
+       ```jsp
+       response.sendRedirect(String url);
+       ```
 
   2. webServer - 브라우저 이동방식
 
-     <a href=""></a> - html문서
+     - <a href=""></a> - html문서
 
-     location.href=" " : script에서 이동
+     - location.href=" " : script에서 이동
 
-     ```html
-     <form action = " ">으로 이동
-     ```
+       방법 : 
+
+       ```jsp
+       <form action = " ">으로 이동
+       ```
+
 
 <hr>
 
@@ -235,7 +244,7 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 > 이안에 메소드 _jspService(request, response){
 >
 > 			  	session, application, out,...(내장객체) 선언
->
+>	
 > 			   }
 
 - #### request => HttpServletRequest의 refernece
@@ -277,7 +286,7 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 
   				     새롭게 request와 response를 생성한 이동방식
   		response.sendRedirect("url주소" userName="+URLEncoder.encode(변수, "UTF-8"));	
-
+	
   	2)forward 방식 : request와 response를 유지하면서 이동 방식
   		request.getRequestDispatcher("LoginOk.jsp").forward(request, response);	
 
@@ -319,6 +328,12 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
   > 특정한 정보를 서버가 시작해서 종료될때까지 유지 되도록함
   >
   > 서버에 대한 정보를 추출과 웹 어플리케이션단위로 상태정보저장
+  >
+  > 서버가 start될 때 단 하나의 application이 생성됨
+  >
+  > stop될때까지 생성된 객체를 계속 사용가능
+  >
+  > ** application쪽에 정보를 저장하면 모든 user들이 공통으로 사용하는 영역이되고 평생 유지된다.
 
   - application.setAttribute(String nae, Object value);
     - 정보를 저장하는 기능
@@ -328,6 +343,8 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
     - name에 해당하는 정보를 삭제하는 기능
   - application.getRealPath(java.lang.String path);
     - 실행되는 문서의 경로를 가져오는 기능
+  - application.contextPath();
+    - url주소에 사이트를 실행할 수 있는 식별자
   - Enumeration e = application.getAttributeNames();
     - 저장된 정보의 name 가져오는 기능
 
@@ -337,11 +354,25 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 
   > jsp페이지 서블릿 실행시 처리하지 못한 예외 처리
 
-  1. jsp문서 첫줄에 errorPage="" 설정하는 방법
+  1. ~.jsp문서 첫줄에 errorPage="" 설정하는 방법
+
      - 모든 예외를 한페이지에서 처리할때 편리함
-  2. web.xml(배포서술자=dd(deployment descriptor)) 문서에 예외별 페이지를 설정하는 방법
+     - 예외마다 하는일을 다르게 처리하기에는 불편
+
+  2. web.xml(배포서술자=DD(Deployment Descriptor)) 문서에 예외별 페이지를 설정하는 방법
+
      - 예외마다 해야할일이 다를 때
-     - 예외별 페이지를 만들어서 처리할 때 편리함
+
+     - 예외코드 or 예외 종류별로 페이지를 만들어서 처리할 때 편리함
+
+       ```jsp
+       - web.xml문서에 아래에 에러페이지 설정한다.
+       <error-page>
+           <exception-type>예외 종류</exception-type>
+           <location>예외가 발생했을때 이동할 페이지</location>
+       </error-page>
+       ```
+
 
 <hr>
 
@@ -351,11 +382,13 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 
   > 클라이언트의 정보를 클라이언트 pc에 저장함
   >
-  > 사용자 측에 대한 정보를 보관해 두었다가 웹서버의 요청에 의해 그 정보를 원하는 순간에 사용할 수 있다.
+  > 사용자 측에 대한 정보를 보관해 두었다가 웹서버의 요청에 의해 정보를 원하는 순간에 사용할 수 있다.
   >
   > 한번에 4KB로 용량이 제한되고 300개 까지 저장가능함
   >
   > 작은정보의 형태로 저장되고 오래되면 자동삭제됨
+  >
+  > 삭제위험, 보안약함 --> 사용자를 분석하거나 사용자의 패턴, 사용자중심의 서비스를 제공할때 많이 사용
 
 - response.addCookie(Cookie co)
 
@@ -409,9 +442,67 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 
    - 소스에 request.setCharacterEncoding(String enc) :설정
 
+<hr>
+
+## scope-서버쪽에 저장
+
+- 웹의 취약점
+  - 상태정보를 지속적으로 유지할수 없다.
+  - why? 사용자의 요청이 들어오면 request, response완료되면 모든 정보와 상태는 끊긴다.
+  - 이런 부분을 해결하기위해 다양한 저장방법을 제공
+  - 페이지를 이동할 때 상태정보를 유지시킬것인가에 대한 저장방법이 scope의 개념으로 해결가능하다.
+
+- pageContext -> request -> session -> application (cookie는 포함X-클라이언트에 저장되기 때문)
+  - 공통의 메소드(저장, 꺼내기)
+    - ~.setAttribute(String name, Object obj);
+    - Object obj = ~.getAttribute(String name);
+    - ~.removeAttribute(String name);
 
 
 
+<hr>
+
+## Servlet문서 작성하기
+
+- #### 반드시 javax.servlet.http.HttpServlet를 상속받는다.(public class)
+
+  ``` java
+  public class A extends HttpServlet{
+      //필요한 메소드 재정의해서 기능 부여
+  }
+  ```
+
+- #### HttpServlet에 있는 관련 메소드
+
+  - ##### init() 
+
+    - 서블릿문서가 초기화될 때 (최초에 처음 실행될때 호출됨)
+
+  - ##### service(ServletRequest request, ServletResponse response)
+
+    - init이 실행될 후 호출됨(서블릿문서 새로고침하면 service실행됨)
+    - 사용자 요청이 get/post인지를 구분하여 doGet or doPost호출함
+
+  - ##### doGet(HttpServletRequest request, HttpServletResponse response)
+
+    - 사용자 요청 get방식일 경우 실행됨
+
+  - ##### doPst(HttpServletRequest request, HttpServletResponse response)
+
+    - 사용자 요청 post방식일 경우 실행됨
+
+  - ##### destory() 
+
+    - 서블릿문서가 종료될때 호출함
+
+- 서블릿문서를 실행하기 위한 준비작업
+
+  1.  public class
+  2.  HttpServlet상속
+  3.  필요한 메소드 재정의
+  4.  servlet을 등록한다.
+      *    1.web.xml문서 등록
+      *    2.@annotation 등록
 
 
 
