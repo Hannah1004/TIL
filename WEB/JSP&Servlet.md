@@ -244,7 +244,7 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 > 이안에 메소드 _jspService(request, response){
 >
 > 			  	session, application, out,...(내장객체) 선언
->	
+>		
 > 			   }
 
 - #### request => HttpServletRequest의 refernece
@@ -286,7 +286,7 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 
   				     새롭게 request와 response를 생성한 이동방식
   		response.sendRedirect("url주소" userName="+URLEncoder.encode(변수, "UTF-8"));	
-	
+		
   	2)forward 방식 : request와 response를 유지하면서 이동 방식
   		request.getRequestDispatcher("LoginOk.jsp").forward(request, response);	
 
@@ -478,16 +478,24 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 
     - 서블릿문서가 초기화될 때 (최초에 처음 실행될때 호출됨)
 
+  - ##### init(ServletConfig config) 
+
+    - ServletConfig는 web.xml문서에 설정되어 있는 서블릿에 대한 환경설정정보를 담고 있는 객체이다.
+    - 서블릿이 생성될때 최초에 딱한번 호출되며 초기치파라미터나 생성되는 시점에 해야하는 일들 작성
+
   - ##### service(ServletRequest request, ServletResponse response)
 
     - init이 실행될 후 호출됨(서블릿문서 새로고침하면 service실행됨)
+
     - 사용자 요청이 get/post인지를 구분하여 doGet or doPost호출함
+
+      : service를 재정의하면 이 일을 안한다.
 
   - ##### doGet(HttpServletRequest request, HttpServletResponse response)
 
     - 사용자 요청 get방식일 경우 실행됨
 
-  - ##### doPst(HttpServletRequest request, HttpServletResponse response)
+  - ##### doPost(HttpServletRequest request, HttpServletResponse response)
 
     - 사용자 요청 post방식일 경우 실행됨
 
@@ -495,7 +503,10 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 
     - 서블릿문서가 종료될때 호출함
 
-- 서블릿문서를 실행하기 위한 준비작업
+
+
+
+- #### 서블릿문서를 실행하기 위한 준비작업
 
   1.  public class
   2.  HttpServlet상속
@@ -504,7 +515,160 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
       *    1.web.xml문서 등록
       *    2.@annotation 등록
 
+<hr>
+
+- #### 서블릿문서 등록 방법
+
+  1. web.xml 문서에 등록
+
+     ``` xml
+     <servlet> <!--객체 생성과 같다.  => t = new Test()와 같다.-->  
+     	<servlet-name>t</servlet-name>
+         <servlet-class>Test</servlet-class>
+         <loac-on-startup>1</loac-on-startup><!--tomcat start될 때 객체 생성-->
+     </servlet>
+     <!--브라우저에서 요청할때 매핑  http://domain:port/contextPath/요청이름-->
+     <servlet-mapping>
+     	<servlet-name>t</servlet-name>
+     	<url-pattern>/t</url-pattern> <!-- "/"를 꼭 써줘야한다. "/"=conntextPath--->
+     </servlet-mapping>
+     ```
+
+  2. @annotation 등록
 
 
 
+<hr>
 
+- ##### 서블릿문서에서 HttpSession 객체 얻어오는 방법
+
+  ```java
+  HttpSession session = request.getSession();
+  ```
+
+- ##### 서블릿문서에서 ServletContext객체 얻어오는 방법
+
+  ```java
+  ServletContext application = request.getServletContext();
+  ```
+
+- ##### 서블릿문서 작성할 때 브라우저에 출력하기 위해 필요한 코드
+
+  ```java
+  PrintWriter out = response.getWriter();
+  ```
+
+- ##### 브라우저에 한글 출력하기위해 문서 첫줄에 필요한 코드
+
+  ```java
+  response.setContentType("text/html:charset=UTF-8");
+  ```
+
+- ##### request으로 전달되는 parameter의 post한글 인코딩 처리
+
+  ```java
+  requset.setCharacterEncoding("UTF-8");
+  ```
+
+<hr>
+
+- #### init-param
+
+  - 서블릿 생성될때 전달되는 초기치 파라미터로 그 서블릿에서만 사용할 수 있는 파라미터 web.xml문서에 선언하는 방법
+
+    ```xml
+    <servlet> 
+    	<servlet-name>t</servlet-name>
+        <servlet-class>Test</servlet-class>
+        <init-param>
+        	<param-name>addr</param-name>
+            <param-value>seoul</param-value>
+        </init-param>
+        <loac-on-startup>1</loac-on-startup>
+    </servlet>
+    ```
+
+  - 서블릿문서에서 초기치 파라미터 사용방법
+
+    ```java
+    public void init(){
+        String addr = super.getInitParameter("addr");
+    }
+    /////////////////////////////////////////////////////////
+    public void init(ServletConfig config){
+        String addr = config.getInitParameter("addr");
+    }
+    ```
+
+<hr>
+
+- #### context-param
+
+  - 모든 서블릿이 공유하기 위한 값을 web.xml문서에 등록하는 방법
+
+    ```xml
+    <context-param>
+    	<param-name>message</param-name>
+        <param-value>servlet</param-value>
+    </context-param>
+    <!-- 모든 서블릿, 모든 jsp에서 tomcat이 stop할 때까지 언제든지 사용가능-->
+    ```
+
+  - init을 서블릿문서에서 사용하는 방법
+
+    ```java
+    public class Test extends HttpServlet{
+        public void init(){
+            ServletContext application = super.getServletContext();
+            String message = application.getInitParameter("message");
+        }
+        public init(ServletConfig config){
+            ServletContext application = super.getServletContext();
+            String message = application.getInitParameter("message");
+        }
+    }
+    ```
+
+  - init을 jsp문서에서 사용하는 방법
+
+    ```jsp
+    String message = application.getInitParameter("message");
+    ```
+
+
+
+<hr>
+
+## Listener
+
+- Listener 작성 방법
+
+  1. XxxListener를 구현하는 구현 객체를 만든다.
+
+     ```java
+     public class AppListener implements Xxx{
+          //메소드 재정의
+     }
+     ```
+
+  2. 메소드 재정의 한다.
+
+  3. Listener등록한다.(둘중에 하나만 써야한다.)
+
+     - web.xml문서
+
+       ```xml
+       <listener>
+       	<listener-class>listener클래스 이름 입력</listener-class>
+       </listener>
+       ```
+
+     - @Annotation등록
+
+       (web.xml에 <listener></listener>등록하는 거와 같다.) 
+
+1. ServletContextListener(implements해줘야한다.)
+   - tomcat이 start or stop될 때 호출되는 이벤트
+2. HttpSessionListener
+   - session이 start or stop될 때 호출되는 이벤트
+3. ServletRequestListener
