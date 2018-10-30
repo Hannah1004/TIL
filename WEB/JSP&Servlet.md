@@ -461,8 +461,10 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 
 
 <hr>
-
 ## Servlet문서 작성하기
+
+- 등록할 때 <load-on-startup>설정하면 tomcat이 start될때 생성됨
+- <load-on-start>가 없으면 최초의 사용자 요청이 들어올때 생성된다.
 
 - #### 반드시 javax.servlet.http.HttpServlet를 상속받는다.(public class)
 
@@ -638,10 +640,15 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 
 
 <hr>
-
 ## Listener
 
-- Listener 작성 방법
+- #### 정의
+
+  - 등록해 놓으면 tomcat이 start될때 자동으로 생성된다. -> 각 구현객체의 init이 호출된다.
+  - 이벤트 처리
+  - 어떤 이벤트가 발생했을 때 자동으로 호출되어지는 메소드를 이미로 정의해놓은 Handler이다.
+
+- #### Listener 작성 방법
 
   1. XxxListener를 구현하는 구현 객체를 만든다.
 
@@ -665,10 +672,240 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 
      - @Annotation등록
 
+       - 구현클래스 위에 @WebListener
+
        (web.xml에 <listener></listener>등록하는 거와 같다.) 
 
-1. ServletContextListener(implements해줘야한다.)
-   - tomcat이 start or stop될 때 호출되는 이벤트
-2. HttpSessionListener
-   - session이 start or stop될 때 호출되는 이벤트
-3. ServletRequestListener
+- #### Listener의 종류
+
+  1. ServletContextListener(implements해줘야한다.)
+
+     - tomcat(서버)이 start or stop될 때 호출되는 이벤트
+     - 주로 프로젝트가 배포될때(open) 사정 초기화 작업 or 전체적인 환경설정을 세팅할 때 주로 사용
+
+     1-1. ServletContextAttributeListener : 속성이 변경될때 호출
+
+  2. HttpSessionListener
+
+     - session이 생성될때 : 브라우저 start 될때 호출되는 이벤트
+     - session이 종료될때 : session.invalidate(), session timeout되었을 때 호출되는 이벤트
+     - 브라우저의 x를 클릭했을 때에는 이벤트 발생 안됨
+
+  3. ServletRequestListener
+
+     - 사용자 요청이 될때, 요청이 완료될때 호출되는 이벤트
+
+
+
+<hr>
+
+## Excutor
+
+- 병렬처리 프로세스를 분산시켜 좀더 빠르게 작업을 수행 할수 있도록 하는 것
+
+  * JDK1.5에서 만들어짐. 병렬처리가 가능한 thread프레임워크를 제공함
+
+    1. Executor : 기본 thread(thread실행에 관련된 메소드만 제공)
+
+    2. ExecutorService : Executor인터페이스를 확장하여 thread라이프사이클 관리까지 해주는 주요 메소드 제공한다.
+
+       (thread실행 + 안전하게 종료할 수 있도록 다양한 메소드 제공한다.)
+
+
+
+## Filter
+
+- #### 정의
+
+  - 등록해 놓으면 tomcat이 start될때 자동으로 생성된다. -> 각 구현객체의 init이 호출된다.
+
+  - 사용자 요청이 있을 때 중간에 filter가 그 요청을 가로채서 **사전처리**하고, 실제 타겟대상을 호출해준후 다시 filter로 돌아와 **사후처리**하고 응답해주는 것.
+
+  - 주로 application영역에서 공통으로 사용해야하는 작업을 필터에 만들어놓고 처리한다.
+
+    (유지보수, 재사용성이 좋아짐) 
+
+    ex) post방식 Encoding, log기록, transaction처리, session유무체크, 예외처리, 
+
+          사용자가 보내오는 parameter정보 필터링 하기
+
+- #### Filter 작성방법
+
+  1. XxxFilter를 구현하는 구현 객체를 만든다.
+
+     ```java
+     public class className implements Filter {
+     
+     }
+     ```
+
+  2. 메소드 재정의한다.
+
+     ```java
+     public void init(FilterConfig fConfig){
+         //init-param으로 전달되는 값 받기
+         String value = fConfig.getInitParameter("id");
+     }
+     public void doFilter (ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+      	//사전처리
+         
+         chain.doFilter(request, response); //실제 타겟대상 호출
+         //사후 처리
+     }
+     ```
+
+  3. 등록 방법
+
+     1. web.xml문서에 작성
+
+        ```xml
+        <filter>
+        	<filter-name></filter-name>
+            <filter-class></filter-class>
+            <init-param>
+            	<param-name></param-name>
+                <param-value></param-value>
+            </init-param>
+        </filter>
+        <filter-mapping>
+        	<filter-name></filter-name>
+        	<url-pattern></url-pattern>  <!-- ex) /* | *.jsp |/폴더/*.jsp -->
+            <servlet-name></servlet-name>
+            
+        </filter-mapping>
+        ```
+
+     2. @annotation등록
+
+        - 구현 클래스 위에 @WebFilter("/urlpattern")
+        - 구현 클래스 위헤 @WebFilter({urlpattern = {}, initParam = {} })
+          - initParam이 있을때 써준다.
+
+## EL(Expression Language)
+
+- 표현 언어 내장객체(생략 가능-이름중복확인하고 생략)
+
+  - pageScope
+    - page기본객체에 저장된 속성
+  - requestScope
+    - request 기본객체에 저장된 속성
+  - sessionScope
+    - session기본객체에 저장된 속성
+  - applicationScope
+    - application기본객체에 저장된 속성
+
+  ```jsp
+  //3개다 같은 뜻!
+  <%= session.getAttribute("id")%>님
+  ${sessionScope.id}님
+  ${id}님
+  
+  요청 parameter의 name에 해당하는 값 가져옴
+  ${param.name} = request.getParameter("name");
+  ```
+
+
+
+- 사용방법
+
+  ```jsp
+  <h1>EL - 표현 언어</h1>
+  <%-- \를 붙이면 문자취급해준다. --%>
+  \${5} = ${5} <br>
+  \${5+3} = ${5+3} <br>
+  \${5/2} = ${5/2} <br>
+  \${5 gt 3} = ${5 gt 3} <br>
+  \${10 lt 3 and 6<3} = ${10 lt 3 and 6<3} <br>
+  
+  ```
+
+
+## JSTL
+
+- jsp에서 표준으로 자주사용하는 부분을 미리 태그로 만들어 놓은것
+- 종류 : core, XML, 국제화 , DB, 함수
+
+
+
+- ### 자주사용하는 코어 JSTL 태그
+
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> : 맨위에 써줘야함
+
+    1. ##### c:out
+
+         ```jsp
+         <c:out value="값 | 변수명" escapeXml="true|false" />
+         escapeXml="true" 는 값에 태그 있으면 문자로 출력됨.
+         ```
+
+    2. ##### c:set
+
+         ```jsp
+         <c:set var="이름" value="값" />
+         주의 : value의 값은 무조건 String
+                만약 value="${20}" 이면 숫자 20
+                     value="${'20'}" 이면 문자 20 
+                     value="20"  이면 문자 20 
+         ```
+
+    3. ##### c:remove 
+
+         ```jsp
+         이름에 해당하는 값 지우기
+         <c:remove var="이름" />
+         ```
+
+    4. ##### c:catch
+
+         ```jsp
+         <c:catch var="이름">
+            예외발생 가능성 코드
+         </c:catch>
+         ```
+
+    5. ##### c:if
+
+         ```jsp
+         <c:if test="조건식" var="결과저장할이름" >
+         	결과가 true일때 실행문장.
+         </c:if>  
+         ```
+
+    6. ##### c:choose
+
+         ```jsp
+         <c:choose>
+             <c:when test="조건식"> 실행문장 </c:when>
+         	<c:when test="조건식"> 실행문장 </c:when>
+         	<c:when test="조건식"> 실행문장 </c:when>
+         	....
+         	<c:otherwise> 위조건이외의 경우 실행문장 </c:otherwise>
+         </c:choose>
+         ```
+
+    7. ##### c:forEach
+
+         ```jsp
+         <c:forEach var="이름" begin="시작" end="끝" step="단계"
+            items="항목" varStatus="현재상태에대한값" >
+         
+            ${상태나타내는변수.index}
+            ${상태나타내는변수.count}
+            ${이름}
+         </c:forEach>
+         ```
+
+
+
+  <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+  - fmt:formatNumber
+
+    ```jsp
+    <fmt:formatNumber value="숫자"/>
+    숫자를 3자리마다 ,를 찍어서 보여준다.
+    ```
+
+
+
+
