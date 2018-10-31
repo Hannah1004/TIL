@@ -640,7 +640,9 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 
 
 <hr>
+
 ## Listener
+
 
 - #### 정의
 
@@ -781,18 +783,30 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
         - 구현 클래스 위헤 @WebFilter({urlpattern = {}, initParam = {} })
           - initParam이 있을때 써준다.
 
+<hr>
+
 ## EL(Expression Language)
 
-- 표현 언어 내장객체(생략 가능-이름중복확인하고 생략)
+- ### 정의
+
+  - 표현 언어 내장객체(생략 가능-이름중복확인하고 생략)
+  - 표현식안에 산술, 논리, 관계 연산자 모두 사용가능, 삼항연산자
+  - parameter로 전송되는 데이터를 간결하게 받아서 출력 ${param.이름}
+
+- ### Scope영역에 저장된 데이터 출력
 
   - pageScope
     - page기본객체에 저장된 속성
+    - ${pageScope.이름}
   - requestScope
     - request 기본객체에 저장된 속성
+    - ${requestScope.이름}
   - sessionScope
     - session기본객체에 저장된 속성
+    - ${sessionScope.이름}
   - applicationScope
     - application기본객체에 저장된 속성
+    - ${applicationScope.이름}
 
   ```jsp
   //3개다 같은 뜻!
@@ -804,9 +818,7 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
   ${param.name} = request.getParameter("name");
   ```
 
-
-
-- 사용방법
+- ### 사용방법
 
   ```jsp
   <h1>EL - 표현 언어</h1>
@@ -819,17 +831,24 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
   
   ```
 
+<hr>
 
 ## JSTL
 
-- jsp에서 표준으로 자주사용하는 부분을 미리 태그로 만들어 놓은것
-- 종류 : core, XML, 국제화 , DB, 함수
+- jakarta.apache.org사이트에서 별도의 JSTL LIB를 다운
 
+  -> 사용하는 프로젝트의 WEB-INF/lib폴더 안에 넣는다.
 
+- ### 정의
+
+  - jsp에서 표준으로 자주사용하는 부분을 미리 태그로 만들어 놓은것
+  - 종류 : core, XML, 국제화 , DB, 함수
 
 - ### 자주사용하는 코어 JSTL 태그
 
-    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> : 맨위에 써줘야함
+    - #### core태그
+
+        <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> : 맨위에 써줘야함
 
     1. ##### c:out
 
@@ -863,7 +882,7 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
          </c:catch>
          ```
 
-    5. ##### c:if
+    5. ##### c:if  : else문을 쓸수 없다.
 
          ```jsp
          <c:if test="조건식" var="결과저장할이름" >
@@ -895,16 +914,22 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
          </c:forEach>
          ```
 
+    - #### 함수
+
+       <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+      - fmt:formatNumber
+
+      ```jsp
+      <fmt:formatNumber value="숫자"/>
+      숫자를 3자리마다 ,를 찍어서 보여준다.
+      ```
+
+<hr>
 
 
-  <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-  - fmt:formatNumber
 
-    ```jsp
-    <fmt:formatNumber value="숫자"/>
-    숫자를 3자리마다 ,를 찍어서 보여준다.
-    ```
 
 
 
