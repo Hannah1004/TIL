@@ -83,7 +83,7 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
 
 ### 1. page지시자
 
-
+- 
 
 ### 2. include 지시자
 
@@ -167,8 +167,6 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
   
     2)post방식
   	- request.setCharacterEncoding("UTF-8") 설정 필수
-  
-  
   -->
   
   ```
@@ -926,11 +924,3 @@ jdk설치 + tomcat설치 + 개발 tool(eclipse) + 브라우저(chrom)
       ```
 
 <hr>
-
-
-
-
-
-
-
-
