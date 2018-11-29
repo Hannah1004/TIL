@@ -136,7 +136,6 @@
 ### Log4j
 
 - java에서 빠르고 효과적으로 로깅할 수 있도록 도와주는 오픈소스
-- 
 
 
 
@@ -191,3 +190,62 @@ src/main/webapp/WEB-INF/ => web.xml문서
   </filter-mapping>
   		
   ```
+
+<hr>
+
+## Transaction
+
+- 가장 큰 예시 : 계좌이체
+
+- AOP기반으로 spring에서 transaction을 만들어 놓았다.
+
+- 성공하면 commit해주고, 실패하면 rollback을 해준다.
+
+- AOP와 transaction에 관련된 LIB가 필요하다.
+
+- DB와 Java언어가 데이터를 주고 받는 과정에 원자성을 부여하는 수단
+
+- ACID(4가지)
+
+  - 원자성(Atomicity) : 전체가 하나로 묶여서 commit, rollback이 되는 것, 일부분만 되는 것은 X
+
+  - 일관성(Consistency) : 일관성있게 모두 성공이면 성공,, 실패면 실패 이렇게 되야한다.
+
+    					일부분만 되는것은 안된다.
+
+  - 고립성(Isolation) : 서로 다른 트랜잭션이 동일한 데이터에 동시에 접근할 경우 알맞게 
+
+    				동시접근제어를 해줘야한다.
+
+  - 지속성(Durability) : 트랜잭션이 완료되면, 그 결과가 지속적으로 유지되어야한다.
+
+    				   * 프로그램상에서 유지되고, 실제 DB에서도 유지되어야한다.
+
+- Manager설정(JDBC사용) : DataSourceTransactionManager사용하면된다.
+
+#### trasaction전파(propagation)
+
+- REQUIRED
+  - 메소드를 수행하는데 트랜잭션이 필요하다는 것을 의미
+  - 현재 진행중인 트랜잭션이 존재하면 해당 트랜잭션을 사용
+  - 존재하지 않다면 새로운 트랜잭션 생성
+- MANDATORY
+  - 메소드를 수행하는데 트랜잭션이 필요하다는 것을 의미
+  - REQUERED와 달리 진행중이 트랜잭션이 존재하지 않는다면 Exception발생
+
+#### transaction 격리(isolation)
+
+- 동시에 여러 트랜잭션이 진행될 때에 트랜잭션의 작업 결과를 다른 트랜잭션에게 어떻게 노출할 것인지를 결정하는 기준
+
+#### transaction <tx:method>태그의 속성
+
+- name : 트랜잭션이 적용될 메소드이름 명시
+- propagation : 트랜잭션 전파규칙을 설정(REQUIRED(기본값), MANDATORY, ...)
+- isolation : 격리레벨을 설정(DEFAULT, READ_UNCOMMITTED...)
+- read-only : 읽기전용여부 설정
+- no-rollback-for : 롤백하지 않을 exception타입을 지정
+- rollback-for : 롤백할 exception타입을 지정
+- timeout : 트랜잭션 타입아웃 시간을 초단위로 지정
+
+
+
