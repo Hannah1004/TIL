@@ -17,7 +17,9 @@
 
 
 
-## 
+### 설계
+
+- sqlsession Template는 즉 sqlsession역할을 한다.
 
 1. SqlSessionFactoryBuilder
    - 공장 설계
@@ -55,6 +57,14 @@
   	<groupId>org.mybatis</groupId>
   	<artifactId>mybatis</artifactId>
   	<version>3.2.8</version>
+  </dependency>
+  
+  <!-- 오라클 설치 -->
+  <dependency>
+  	<groupId>com.oracle</groupId>
+  	<artifactId>ojdbc6</artifactId>
+  	<version>11.2.0.3</version>
+  	<scope>compile</scope>
   </dependency>
   
   <!-- https://mvnrepository.com/artifact/log4j/log4j -->
